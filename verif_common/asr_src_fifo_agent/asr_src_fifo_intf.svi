@@ -1,0 +1,60 @@
+// =========================================================================== //
+// Author       : fengyang.wu - ASR
+// Last modified: 2020-07-10 17:14
+// Filename     : asr_src_fifo_if.sv
+// Description  : 
+// =========================================================================== //
+
+`ifndef ASR_SRC_FIFO_INTF__SV
+`define ASR_SRC_FIFO_INTF__SV
+
+`ifndef ASR_SRC_FIFO_MAX_DATA_WIDTH
+`define ASR_SRC_FIFO_MAX_DATA_WIDTH 256
+`endif
+
+interface asr_src_fifo_intf(input logic clk, input logic rst);
+    parameter setup_time = 0.1ns;
+    parameter hold_time = 0.1ns;
+    
+    //for mode 
+    logic is_active = 0;
+    logic master_mode = 0;
+    logic cfg_toggle = 0;
+
+    //add your driver signal
+
+    logic                                          valid;
+    logic                                          full;
+    logic   [`ASR_SRC_FIFO_MAX_DATA_WIDTH-1: 0] node;
+
+
+    clocking slv_drvcb @(posedge clk);
+        default input #setup_time output #hold_time;
+        input valid;
+        input node;
+        output full;
+    endclocking : slv_drvcb
+
+    clocking mst_drvcb @(posedge clk);
+        default input #setup_time output #hold_time;
+        output valid;
+        output node;
+        input full;
+    endclocking : mst_drvcb
+
+    clocking moncb @(posedge clk);
+        default input #setup_time output #hold_time;
+        input valid;
+        input node;
+        input full;
+    endclocking : moncb
+
+
+    task reset();
+       valid = 0;
+       full = 0;
+       node = 'hx;
+    endtask
+endinterface : asr_src_fifo_intf
+`endif // ASR_SRC_FIFO_INTF__SV
+

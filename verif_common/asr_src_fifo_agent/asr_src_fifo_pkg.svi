@@ -1,0 +1,26 @@
+`ifndef ASR_SRC_FIFO_PKG__SVI
+`define ASR_SRC_FIFO_PKG__SVI
+
+`include "uvm_macros.svh"
+`include "asr_common_pkg.svi"
+`include "env_common_pkg.svi"
+`include "asr_src_fifo_intf.svi"
+//`include "asr_src_fifo_sva.svi"
+
+package asr_src_fifo_pkg;
+    import uvm_pkg::*;
+    import asr_common_pkg::*;
+    import env_common_pkg::*;
+
+
+    `include "asr_src_fifo_agent_cfg.sv"
+    `include "asr_src_fifo_coverage.sv"
+    `include "asr_src_fifo_sequencer.sv"
+    `include "asr_src_fifo_driver.sv"
+    `include "asr_src_fifo_monitor.sv"
+    `include "asr_src_fifo_agent.sv"
+    `include "asr_src_fifo_seq_lib.sv"
+
+endpackage : asr_src_fifo_pkg
+
+`endif // ASR_SRC_FIFO_PKG__SVI

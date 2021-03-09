@@ -1,0 +1,61 @@
+`ifndef NR_L2DL_TOP_INTF__SVI
+`define NR_L2DL_TOP_INTF__SVI
+
+
+interface nr_l2dl_top_intf( input logic clk, input logic rst);
+    parameter   setup_time = 0.1ns;
+    parameter   hold_time  = 0.1ns;
+
+    logic  cfg_toggle = 0;
+    logic  [`GMWCL-1:0] mem_ctrl;
+
+    logic          l2mac_re;   
+    logic  [13:0]  l2mac_raddr;
+    logic          l2mac_rvld; 
+    logic  [127:0] l2mac_rdata;
+    logic          l2_trig;
+    logic  [11:0]  l2_tag;
+    logic          l2_ready;
+    logic          l2mac_req;
+    logic  [11:0]  l2mac_tag;     
+    logic          l2mac_done;
+    logic          l2dtc_done;
+    logic          l2dtc_req;
+    logic          dtc_tb_int;
+    logic  [1:0]   blk_size;
+    logic  [8:0]   blkaddr_fifo_freespace;
+    logic          blkaddr_fifo_w;
+    logic  [63:0]  blkaddr_fifo_din;
+    logic          padding_flag;
+ 
+    clocking drvcb @(posedge clk);
+        default input #setup_time output #hold_time;
+        input   l2mac_re;   
+        input   l2mac_raddr;
+        output  l2mac_rvld; 
+        output  l2mac_rdata;
+        input   l2mac_req;     
+        input   l2mac_tag;     
+        input   l2mac_done;
+        input   l2dtc_req;     
+        input   l2dtc_done;
+        input   dtc_tb_int;
+        output  l2_trig;
+        output  l2_tag;
+        input   l2_ready;
+    endclocking : drvcb
+
+    clocking moncb @(posedge clk);
+        default input #setup_time output #hold_time;
+        //input req;
+        //input arb_req;
+        //input arb_gnt;
+        //input empty;
+        //input rdata;
+    endclocking : moncb
+
+    task reset();
+    endtask
+
+endinterface : nr_l2dl_top_intf
+`endif

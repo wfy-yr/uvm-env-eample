@@ -1,0 +1,67 @@
+
+//eg: `define NR_L2DL_IN_IF_TB(instance_if, subsys) \
+//uvm_config_db #(virtual src_fifo_inf)::set(uvm_root::get(), $sformatf("*%s.m_nr_l2dl_in_agent", subsys), "vif", instance_if);
+//========================= nr_l2dl_dtc_rdma_if_tb    for reuse ====================
+
+`define NR_L2DL_DTC_RDMA_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual nr_l2dl_dtc_rdma_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_l2dl_dtc_pld_if_tb    for reuse ====================
+`define NR_L2DL_DTC_PLD_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual nr_l2dl_dtc_pld_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_dtc_cmd_if_tb    for reuse ====================
+
+`define RX_MAC_DTC_CMD_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual asr_dst_fifo_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_dma_if_tb    for reuse ====================
+
+`define RX_MAC_DMA_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_dma_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= nr_l2dl_tb_cmd_if_tb    for reuse ====================
+
+`define NR_L2DL_TB_CMD_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_tb_cmd_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_l1_mce_if_tb    for reuse ====================
+
+`define RX_MAC_L1_MCE_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_mce_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_l2_mce_if_tb    for reuse ====================
+
+`define RX_MAC_L2_MCE_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_mce_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_dl_node0_if_tb    for reuse ====================
+
+`define RX_MAC_DL_NODE0_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_dl_node0_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= rx_mac_top_if_tb    for reuse ====================
+
+`define RX_MAC_TOP_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual rx_mac_top_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+//========================= nr_l2dl_l1_cfg_if_tb    for reuse ====================
+
+`define NR_L2DL_L1_CFG_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual regbus_if)::set(uvm_root::get(), $sformatf("*%s", subsys), "sigs", instance_if);
+
+//========================= nr_l2dl_l2_cfg_if_tb    for reuse ====================
+
+`define NR_L2DL_L2_CFG_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual regbus_if)::set(uvm_root::get(), $sformatf("*%s", subsys), "sigs", instance_if);
+
+//========================= nr_l2dl_top_if_tb    for reuse ====================
+
+`define NR_L2DL_TOP_IF_TB(instance_if, subsys) \
+uvm_config_db #(virtual nr_l2dl_top_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+
+////========================= nr_l2dl_dma_axi_if_tb    for reuse ====================
+//
+//`define NR_L2DL_DMA_CFG_IF_TB(instance_if, subsys) \
+//uvm_config_db #(virtual nr_l2dl_dma_intf)::set(uvm_root::get(), $sformatf("*%s", subsys), "vif", instance_if);
+

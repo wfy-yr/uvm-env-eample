@@ -1,0 +1,57 @@
+// =========================================================================== //
+// Author       : fengyang.wu - ASR
+// Last modified: 2020-07-10 17:14
+// Filename     : nr_l2dl_dtc_rdma_if.sv
+// Description  : 
+// =========================================================================== //
+
+`ifndef NR_L2DL_DTC_RDMA_INTF__SV
+`define NR_L2DL_DTC_RDMA_INTF__SV
+
+`ifndef NR_L2DL_DTC_RDMA_MAX_DATA_WIDTH
+`define NR_L2DL_DTC_RDMA_MAX_DATA_WIDTH 128
+`endif
+
+`ifndef NR_L2DL_DTC_RDMA_MAX_ADDR_WIDTH
+`define NR_L2DL_DTC_RDMA_MAX_ADDR_WIDTH 32
+`endif
+
+`ifndef NR_L2DL_DTC_RDMA_MAX_DATA_LEN
+`define NR_L2DL_DTC_RDMA_MAX_DATA_LEN 16
+`endif
+
+interface nr_l2dl_dtc_rdma_intf(input logic clk, input logic rst);
+    parameter setup_time = 0.1ns;
+    parameter hold_time = 0.1ns;
+    
+    //for mode 
+    logic is_active = 0;
+    logic cfg_toggle = 0;
+
+    //add your driver signal
+
+    logic                                                 mem_rd;
+    logic   [`NR_L2DL_DTC_RDMA_MAX_DATA_LEN-1: 0]         mem_len;
+    logic   [`NR_L2DL_DTC_RDMA_MAX_ADDR_WIDTH-1: 0]       mem_addr;
+    logic   [`NR_L2DL_DTC_RDMA_MAX_DATA_WIDTH-1: 0]       mem_data;
+
+    clocking drvcb @(posedge clk);
+        default input #setup_time output #hold_time;
+        output mem_data;
+    endclocking : drvcb
+
+    clocking moncb @(posedge clk);
+        default input #setup_time output #hold_time;
+        input mem_rd;
+        input mem_len;
+        input mem_data;
+        input mem_addr;
+    endclocking : moncb
+
+
+    task reset();
+       mem_data = 'h0;
+    endtask
+endinterface : nr_l2dl_dtc_rdma_intf
+`endif // NR_L2DL_DTC_dma_INTF__SV
+

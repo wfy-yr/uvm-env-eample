@@ -1,0 +1,7 @@
+//seq file
+`include "nr_l2dl_vseq_include.svi"
+//tests file
+`include "nr_l2dl_base_test.sv"
+//`include "rx_mac_common_test.sv"
+//`include "rx_mac_reg_test.sv"
+//`include "rx_mac_reset_test.sv"

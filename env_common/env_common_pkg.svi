@@ -1,9 +1,15 @@
-`ifndef ENV_COMMON_PKG__SVI
 `define ENV_COMMON_PKG__SVI
 package env_common_pkg;
     import uvm_pkg::*;
 
-    `include "xxx_common_types.sv"
-    `include "xxx_reg_cfg.sv"
+    `include "nr_l2dl_common_types.sv"
+    `include "nr_l2dl_mac_pkt.sv"
+    `include "nr_l2dl_pdcp_pkt.sv"
+    `include "nr_l2dl_rlc_pkt.sv"
+    `include "nr_l2dl_sdap_pkt.sv"
+    `include "nr_l2dl_pld_pkt.sv"
+    `include "rx_mac_reg_cfg.sv"
+    `include "nr_l2dl_lc_cfg.sv"
+    `include "nr_l2dl_mce_cfg.sv"
 endpackage : env_common_pkg
 `endif

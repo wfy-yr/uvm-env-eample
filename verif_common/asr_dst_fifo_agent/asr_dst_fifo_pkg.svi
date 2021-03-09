@@ -1,0 +1,28 @@
+`ifndef ASR_DST_FIFO_PKG__SVI
+`define ASR_DST_FIFO_PKG__SVI
+
+`include "uvm_macros.svh"
+`include "asr_common_pkg.svi"
+`include "env_common_pkg.svi"
+`include "asr_dst_fifo_intf.svi"
+//`include "asr_dst_fifo_sva.svi"
+
+package asr_dst_fifo_pkg;
+    import uvm_pkg::*;
+    import asr_common_pkg::*;
+    import env_common_pkg::*;
+
+
+    `include "asr_dst_fifo_agent_cfg.sv"
+    //`include "asr_dst_fifo_trans.sv"
+    `include "asr_dst_fifo_coverage.sv"
+    `include "asr_dst_fifo_sequencer.sv"
+    `include "asr_dst_fifo_driver.sv"
+    `include "asr_dst_fifo_monitor.sv"
+    `include "asr_dst_fifo_agent.sv"
+    `include "asr_dst_fifo_seq_lib.sv"
+
+endpackage : asr_dst_fifo_pkg
+
+`endif // ASR_DST_FIFO_PKG__SVI
+

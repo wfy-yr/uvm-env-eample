@@ -1,0 +1,8 @@
+`include "seq/nr_l2dl_base_seq.sv"
+`include "seq/nr_l2dl_init_seq.sv"
+`include "seq/nr_l2dl_init_regbus_seq.sv"
+`include "seq/nr_l2dl_l1_cfg_seq.sv"
+`include "seq/nr_l2dl_l2_cfg_seq.sv"
+`include "seq/nr_l2dl_mini_seq.sv"
+`include "seq/nr_l2dl_tb_cmd_seq.sv"
+`include "seq/nr_l2dl_blkaddr_seq.sv"

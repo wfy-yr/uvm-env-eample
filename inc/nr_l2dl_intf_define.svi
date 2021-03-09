@@ -1,0 +1,279 @@
+// =========================================================================== //
+// Author       : fengyangwu - ASR
+// Last modified: 2020-07-09 15:28
+// Filename     : nr_l2dl_intf_define.sv
+// Description  : 
+// =========================================================================== //
+
+//========================= nr_l2dl_l1_cfg_if_rtl    for reuse ====================
+`define NR_L2DL_L1_CFG_IF_RTL(instance_if, hierarchy, is_active_na) \
+regbus_if instance_if(.iclk     (hierarchy.aclk_s             )); \
+    //assign  hierarchy.l1_presetn    = instance_if.ireset         ; \
+    assign  hierarchy.l1_ipsel      = instance_if.isel           ; \
+    assign  hierarchy.l1_ipwen      = instance_if.iwen           ; \
+    assign  hierarchy.l1_ipren      = instance_if.iren           ; \
+    assign  hierarchy.l1_iplane     = instance_if.ilane          ; \
+    assign  hierarchy.l1_ipaddr     = instance_if.iaddr          ; \
+    assign  hierarchy.l1_ipwdata    = instance_if.iwdata         ; \
+    assign  instance_if.irdata      = hierarchy.l1_iprdata       ; 
+
+//========================= nr_l2dl_l2_cfg_if_rtl    for reuse ====================
+`define NR_L2DL_L2_CFG_IF_RTL(instance_if, hierarchy, is_active_na) \
+regbus_if instance_if(.iclk     (hierarchy.l2_aclk_s             )); \
+    //assign  hierarchy.l2_presetn    = instance_if.ireset         ; \
+    assign  hierarchy.l2_ipsel      = instance_if.isel           ; \
+    assign  hierarchy.l2_ipwen      = instance_if.iwen           ; \
+    assign  hierarchy.l2_ipren      = instance_if.iren           ; \
+    assign  hierarchy.l2_iplane     = instance_if.ilane          ; \
+    assign  hierarchy.l2_ipaddr     = instance_if.iaddr          ; \
+    assign  hierarchy.l2_ipwdata    = instance_if.iwdata         ; \
+    assign  instance_if.irdata      = hierarchy.l2_iprdata       ;
+
+//========================= nr_l2dl_dtc_pld_if_rtl    for reuse ====================
+`define NR_L2DL_DTC_PLD_IF_RTL(instance_if, hierarchy, is_active_na) \
+nr_l2dl_dtc_pld_intf instance_if(.clk     (hierarchy.clk983m              ), \
+                           .rst     (hierarchy.clkgen_rstn        )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect nr_l2dl_dtc_pld cfg toggle is_active %0d", instance_if.is_active); \
+    if(instance_if.is_active) begin\
+    end \
+    else begin \
+        //force instance_if.ready           = (((hierarchy.u_nr_rx_mac.u2_nr_rxmac_hdr_dec.cfg_cip_present == 'h0)&&(hierarchy.u_nr_rx_mac.u2_nr_rxmac_hdr_dec.cfg_int_present == 'h0)) || (hierarchy.u_nr_rx_mac.u1_nr_rxmac_din_proc.req_pkt_type != 'h1) || (hierarchy.u_nr_rx_mac.u2_nr_rxmac_hdr_dec.u3_rxmac_pkt_asmb.u0_nr_rxmac_seg_search.asmb_success_flag == 'h1) || (hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.u1_nr_rxmac_l2_para.u1_nr_rxmac_l2glb_para.asmb_seg_type == 'h0)) && hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_ready; \
+        force instance_if.ready           = hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_ready; \
+        force instance_if.valid           = hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_wr; \
+        force instance_if.data            = hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_wdat[127:0]; \
+        force instance_if.mask            = hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_len; \
+        force instance_if.addr            = hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_dma_addr + hierarchy.u_nr_dldtc_top.u_nr_dldtc_ctrl.bank_wadd; \
+    end \
+end
+
+//========================= nr_l2dl_dtc_rdma_if_rtl    for reuse ====================
+`define NR_L2DL_DTC_RDMA_IF_RTL(instance_if, hierarchy, is_active_na) \
+nr_l2dl_dtc_rdma_intf instance_if(.clk     (~hierarchy.aclk_m              ), \
+                           .rst     (hierarchy.clkgen_rstn        )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect nr_l2dl_dtc_rdma cfg toggle is_active %0d", instance_if.is_active); \
+    if(instance_if.is_active) begin\
+    end \
+    else begin \
+        force instance_if.mem_rd            = ~hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.RD;\
+        force instance_if.mem_data          = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.D;\
+        force instance_if.mem_addr          = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.A;\
+        force instance_if.mem_len           = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.WEN;\
+    end \
+end
+
+//========================= nr_l2dl_tb_cmd_if_rtl    for reuse ====================
+`define NR_L2DL_TB_CMD_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_tb_cmd_intf instance_if(.clk     (hierarchy.clk983m              ), \
+                           .rst     (hierarchy.clkgen_rstn        )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect nr_l2dl_tb_cmd cfg toggle is_active %0d", instance_if.is_active); \
+    force instance_if.ready     = hierarchy.l2mac_req; \
+    force hierarchy.l2mac_para        =  instance_if.data; \
+    if(instance_if.is_active) begin\
+    end \
+    else begin \
+           //force instance_if.AGCRifsDetected     = hierarchy.AGCRifsDetected         ; \
+    end \
+end
+
+//========================= rx_mac_l1_mce_if_rtl    for reuse ====================
+`define RX_MAC_L1_MCE_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_mce_intf instance_if(.clk     (hierarchy.clk983m              ), \
+                           .rst     (hierarchy.clkgen_rstn          )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_l1_mce cfg toggle is_active %0d", instance_if.is_active); \
+    if(instance_if.is_active) begin\
+        //force hierarchy.tb_info_start_addr_wr             =  instance_if.valid; \
+        //force hierarchy.tb_info_start_addr_wdata          =  instance_if.data; \
+    end \
+    else begin \
+        force instance_if.valid     =  hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u1_nr_rxmac_mcenode_gen.macce_node1_wr; \
+        force instance_if.data     = hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u1_nr_rxmac_mcenode_gen.macce_node1_wdata[127:0]; \
+    end \
+end
+
+//========================= rx_mac_l2_mce_if_rtl    for reuse ====================
+`define RX_MAC_L2_MCE_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_mce_intf instance_if(.clk     (hierarchy.clk983m              ), \
+                           .rst     (hierarchy.clkgen_rstn          )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_l2_mce cfg toggle is_active %0d", instance_if.is_active); \
+    if(instance_if.is_active) begin\
+        //force hierarchy.tb_info_start_addr_wr             =  instance_if.valid; \
+        //force hierarchy.tb_info_start_addr_wdata          =  instance_if.data; \
+    end \
+    else begin \
+        force instance_if.valid     =  hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u1_nr_rxmac_mcenode_gen.macce_node2_wr; \
+        force instance_if.data      = hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u1_nr_rxmac_mcenode_gen.macce_node2_wdata[127:0]; \
+    end \
+end
+
+//========================= rx_mac_dl_node0_if_rtl    for reuse ====================
+`define RX_MAC_DL_NODE0_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_dl_node0_intf instance_if(.clk     (hierarchy.clk983m              ), \
+                           .rst     (hierarchy.clkgen_rstn      )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_dl_node0 cfg toggle is_active %0d", instance_if.is_active); \
+    if(instance_if.is_active) begin\
+        //force hierarchy.tb_info_start_addr_wr             =  instance_if.valid; \
+        //force hierarchy.tb_info_start_addr_wdata          =  instance_if.data; \
+    end \
+    else begin \
+        force instance_if.valid     =  hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u0_nr_rxmac_dlnode_gen.dl_node0_wr; \
+        force instance_if.data      = hierarchy.u_nr_rx_mac.u3_nr_rxmac_node_gen.u0_nr_rxmac_dlnode_gen.dl_node0_wdata[127:0]; \
+    end \
+end
+
+//========================= rx_mac_dma_if_rtl    for reuse ====================
+`define RX_MAC_DMA_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_dma_intf instance_if(.clk     (hierarchy.aclk_m         ), \
+                           .rst     (hierarchy.clkgen_rstn      )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_dma cfg toggle is_active %0d", instance_if.is_active); \
+    force instance_if.mem_clk           = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.CLK;\
+    force instance_if.mem_rd            = ~hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.RD;\
+    force instance_if.mem_data          = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.D;\
+    force instance_if.mem_addr          = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.A;\
+    force instance_if.mem_len           = hierarchy.u_axi_host.host_mem.ext_pmem_blk0_bnk0.WEN;\
+    //force instance_if.rdata                  = hierarchy.rxmac_dma_rdata; \
+    //force instance_if.req                    =  hierarchy.rxmac_dma_req; \
+    //force instance_if.length                 =  hierarchy.rxmac_dma_length; \
+    //force instance_if.dst_addr               =  hierarchy.rxmac_dma_dst_addr; \
+    //force instance_if.rdata                  =  hierarchy.rxmac_dma_rdata; \
+    //force instance_if.dma_clk                =  hierarchy.u_nr_rx_mac.dma_clk; \
+    force instance_if.tb_info2_dma_addr      =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_tb_info2_dma_addr;\
+    force instance_if.tb_info1_dma_addr      =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_tb_info1_dma_addr;\
+    force instance_if.dl_node0_dma_addr      =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_dl_node0_dma_addr;\
+    force instance_if.dl_node1_dma_addr      =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_dl_node1_dma_addr;\
+    force instance_if.macce_node1_dma_addr   =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_macce_node1_dma_addr;\
+    force instance_if.macce_node2_dma_addr   =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_macce_node2_dma_addr;\
+    force instance_if.acc_node_dma_addr      =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_acc_node_dma_addr;\
+    force instance_if.tb_int                 =  hierarchy.u_nr_rx_mac.dtc_tb_int;\
+    force instance_if.cfg_dl_node0_space     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_dl_node0_space;\
+    force instance_if.cfg_dl_node1_space     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_dl_node1_space;\
+    force instance_if.cfg_macce_pld_space    =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_macce_pld_space;\
+    force instance_if.cfg_acc_node_space     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_acc_node_space;\
+    force instance_if.cfg_macce_node2_space  =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_macce_node2_space;\
+    force instance_if.cfg_macce_node1_space  =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_macce_node1_space;\
+    force instance_if.cfg_tb_info1_space     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_tb_info1_space;\
+    force instance_if.cfg_tb_info2_space     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.cfg_tb_info2_space;\
+    if(instance_if.is_active) begin\
+        //force hierarchy.rxmac_dma_rd             =  instance_if.rd; \
+        //force hierarchy.rxmac_dma_raddr          =  instance_if.raddr; \
+        //force hierarchy.rxmac_dma_busy           =  instance_if.busy; \
+    end \
+    else begin \
+         //force instance_if.AGCRifsDetected     = hierarchy.AGCRifsDetected         ; \
+    end \
+end
+
+//========================= dl_dtc_dma_if_rtl    for reuse ====================
+`define DL_DTC_DMA_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_dma_intf instance_if(.clk     (hierarchy.aclk_m         ), \
+                           .rst     (hierarchy.clkgen_rstn      )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect dl_dtc_dma cfg toggle is_active %0d", instance_if.is_active); \
+    //force instance_if.rdata     = hierarchy.dldtc_dma_rdata; \
+    if(instance_if.is_active) begin\
+        //force hierarchy.dldtc_dma_nce            =  ~instance_if.rd; \
+        //force hierarchy.dldtc_dma_nwe            =  instance_if.rd; \
+        //force hierarchy.dldtc_dma_addr           =  instance_if.raddr; \
+        //force hierarchy.dldtc_dma_busy           =  instance_if.busy; \
+        //force instance_if.req                    =  hierarchy.dldtc_dma_req; \
+        //force instance_if.length                 =  hierarchy.dldtc_dma_length; \
+        //force instance_if.dst_addr               =  hierarchy.dldtc_dma_dst_addr; \
+    end \
+    else begin \
+         //force instance_if.AGCRifsDetected     = hierarchy.AGCRifsDetected         ; \
+    end \
+end
+
+//========================= rx_mac_dtc_cmd_if_rtl    for reuse ====================
+`define RX_MAC_DTC_CMD_IF_RTL(instance_if, hierarchy, is_active_na) \
+asr_dst_fifo_intf instance_if(.clk     (hierarchy.u_nr_rx_mac.clk            ), \
+                           .rst     (hierarchy.u_nr_rx_mac.rst_n          )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_dtc_cmd cfg toggle is_active %0d", instance_if.is_active); \
+    force instance_if.rdata     = hierarchy.u_nr_rx_mac.dtc_cmd_fifo_rdata; \
+    if(instance_if.is_active) begin\
+        if(instance_if.master_mode) begin\
+            force hierarchy.u_nr_rx_mac.dtc_cmd_fifo_rd             =  instance_if.req; \
+            force instance_if.empty                                 =  hierarchy.u_nr_rx_mac.dtc_cmd_fifo_empty; \
+        end \
+        else begin \
+        end \
+    end \
+    else begin \
+           //force instance_if.AGCRifsDetected     = hierarchy.AGCRifsDetected         ; \
+    end \
+end
+//========================= rx_mac_top_if_rtl    for reuse ====================
+`define RX_MAC_TOP_IF_RTL(instance_if, hierarchy, is_active_na) \
+rx_mac_top_intf instance_if(.clk     (hierarchy.clk983m        ), \
+                           .rst     (hierarchy.clkgen_rstn    )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect rx_mac_top cfg toggle is %0d", instance_if.cfg_toggle); \
+    //----------------------------------------top if ---------------------- \
+    force instance_if.tb_proc_id      =  hierarchy.l2mac_tag; \
+end
+
+//========================= nr_l2dl_top_if_rtl    for reuse ====================
+`define NR_L2DL_TOP_IF_RTL(instance_if, hierarchy, is_active_na) \
+nr_l2dl_top_intf instance_if(.clk     (hierarchy.clk983m            ), \
+                           .rst     (hierarchy.clkgen_rstn          )); \
+always @(instance_if.cfg_toggle) begin\
+    $display("detect nr_l2dl_top cfg toggle is %0d", instance_if.cfg_toggle); \
+    //force hierarchy.mem_ctrl            =  64'h2aaa82d474111905; \
+    force hierarchy.test_mode           =  'h0;//instance_if.mem_ctrl; \
+    force hierarchy.mbist_mode          =  'h0;//instance_if.mem_ctrl; \
+    force hierarchy.scan_rstn           =  'h1;//instance_if.mem_ctrl; \
+    force hierarchy.scan_rst_sel        =  'h0;//instance_if.mem_ctrl; \
+    force hierarchy.scan_mode           =  'h0;//instance_if.mem_ctrl; \
+    force hierarchy.sftrstn2            =  30'h3fffffff;//instance_if.mem_ctrl; \
+    force hierarchy.clkgat1             =  22'h3fffff;//instance_if.mem_ctrl; \
+    force hierarchy.auto_cgen0          =  13'h1fff;//instance_if.mem_ctrl; \
+    //----------------------------------------top if ---------------------- \
+    force hierarchy.mem_ctrl          =  instance_if.mem_ctrl; \
+    //force hierarchy.l2mac_rdata       =  instance_if.l2mac_rdata; \
+    //force hierarchy.l2mac_rvld        =  instance_if.l2mac_rvld; \
+    force instance_if.l2mac_re        =  hierarchy.l2mac_re; \
+    force instance_if.l2mac_raddr     =  hierarchy.l2mac_raddr; \
+    force hierarchy.l2_trig           =  instance_if.l2_trig; \
+    force hierarchy.l2_tag            =  instance_if.l2_tag; \
+    force instance_if.l2_ready        =  hierarchy.l2_ready; \
+    force instance_if.l2mac_req       =  hierarchy.l2mac_req; \
+    force instance_if.l2mac_tag       =  hierarchy.l2mac_tag; \
+    force instance_if.l2mac_done      =  hierarchy.l2mac_done; \
+    force instance_if.l2dtc_req       =  hierarchy.l2dtc_req; \
+    force instance_if.l2dtc_done      =  hierarchy.l2dtc_done; \
+    force instance_if.dtc_tb_int      =  hierarchy.dtc_tb_int; \
+    force instance_if.blk_size        =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.u1_nr_rxmac_l2_para.u1_nr_rxmac_l2glb_para.blk_size[1:0]; \
+    force instance_if.blkaddr_fifo_freespace     =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.u1_nr_rxmac_l2_para.blkaddr_fifo_freespace[8:0]; \
+    force instance_if.blkaddr_fifo_w             =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.u1_nr_rxmac_l2_para.blkaddr_fifo_w; \
+    force instance_if.blkaddr_fifo_din           =  hierarchy.u_nr_rx_mac.u0_nr_rxmac_para_top.u1_nr_rxmac_l2_para.blkaddr_fifo_din[63:0]; \
+end
+
+//========================= nr_l2dl_dma_axi_if_rtl    for reuse ====================
+
+//`define NR_L2DL_DMA_CFG_IF_RTL(instance_if, hierarchy, is_active_na) \
+//nr_l2dl_dma_intf instance_if(.clk     (hierarchy.clk       ), \
+//                           .rst     (hierarchy.rst_n      )); \
+//always @(instance_if.cfg_toggle) begin\
+//    $display("detect nr_l2dl_dma_axi cfg toggle is_active %0d", instance_if.is_active); \
+//    if(instance_if.is_active) begin\
+//        //force hierarchy.wr_start0      =  instance_if.req; \
+//        //force hierarchy.wr_length0     =  instance_if.length; \
+//        //force hierarchy.daddr0         =  instance_if.dst_addr; \
+//        //force hierarchy.mem0_rdata     =  instance_if.rdata; \
+//        //force instance_if.busy         =  hierarchy.dma_busy; \
+//        //force instance_if.rd           =  hierarchy.mem0_read; \
+//        //force instance_if.raddr        =  hierarchy.mem0_addr_read; \
+//        //force instance_if.busy         =  hierarchy.wr_busy[0]; \
+//    end \
+//    else begin \
+//           //force instance_if.AGCRifsDetected     = hierarchy.AGCRifsDetected         ; \
+//    end \
+//end
+

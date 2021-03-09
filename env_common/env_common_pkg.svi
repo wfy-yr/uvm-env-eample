@@ -1,0 +1,9 @@
+`ifndef ENV_COMMON_PKG__SVI
+`define ENV_COMMON_PKG__SVI
+package env_common_pkg;
+    import uvm_pkg::*;
+
+    `include "xxx_common_types.sv"
+    `include "xxx_reg_cfg.sv"
+endpackage : env_common_pkg
+`endif

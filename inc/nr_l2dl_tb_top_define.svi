@@ -1,0 +1,64 @@
+`define HWTOP_HIER hw_top
+`define UVM_REG_ADDR_WIDTH 12
+`define REGBUS_ILANE 2
+`define REGBUS_IADDR 12
+`define REGBUS_IWDATA 64
+`define REGBUS_IRDATA 64
+
+
+`define RX_MAC_ENTITY_NUM 34
+`define TB_IDX 0
+`define TB_NUM 6
+`define TB_ADD 0 
+//`define TB_NUM 1
+//`define TB_ADD 1 
+//`define TB_GEN
+
+//`define UDLY #(0.508626302*10)
+
+`define NR_L2DL_DUT_CLK_RST_SRC(hierarchy) \
+   reg clk_983M                ; \
+   reg clk_500M                ; \
+   reg clk_800M                ; \
+   reg rst_n                      ; \
+   //real clk_983M_semiperiod =  2.083333333333333333333333333333; \
+   initial begin \
+     clk_983M = 0; \
+     forever begin \
+        #0.508626302  clk_983M = ~clk_983M; \
+     end \
+   end \
+   initial begin \
+     clk_500M = 0; \
+     forever begin \
+        #1            clk_500M = ~clk_500M; \
+     end \
+   end \
+   initial begin \
+     clk_800M = 0; \
+     forever begin \
+        #2.5         clk_800M = ~clk_800M; \
+     end \
+   end \
+   assign hierarchy.clk983m     = clk_983M     ; \
+   assign hierarchy.aclk_m      = clk_800M     ; \
+   assign hierarchy.aclk_s      = clk_500M     ; \
+   assign hierarchy.l2_aclk_s   = clk_500M     ; \
+   initial begin \
+     rst_n        = 0; \
+     #100            ; \
+     rst_n        = 1; \
+   end \
+   assign hierarchy.dec_rstn        = rst_n             ; \
+   assign hierarchy.clkgen_rstn     = rst_n             ; \
+
+
+`define NR_L2DL_FSDB_DUMP_MACRO \
+   initial begin \
+      if($test$plusargs("FSDB")) begin \
+         $fsdbDumpfile("tb_top.fsdb"); \
+         //$fsdbAutoSwitchDumpfile(1000, "tb_top.fsdb", 5); \
+         $fsdbDumpvars(0,hw_top,"+mda"); \
+         $fsdbDumpon; \
+      end \
+   end

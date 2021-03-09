@@ -1,0 +1,28 @@
+`ifndef NR_L2DL_DTC_RDMA_PKG__SVI
+`define NR_L2DL_DTC_RDMA_PKG__SVI
+
+`include "uvm_macros.svh"
+`include "asr_common_pkg.svi"
+`include "env_common_pkg.svi"
+`include "nr_l2dl_dtc_rdma_intf.svi"
+//`include "nr_l2dl_dtc_rdma_sva.svi"
+
+package nr_l2dl_dtc_rdma_pkg;
+    import uvm_pkg::*;
+    import asr_common_pkg::*;
+    import env_common_pkg::*;
+
+
+    `include "nr_l2dl_dtc_rdma_agent_cfg.sv"
+    //`include "nr_l2dl_dtc_rdma_trans.sv"
+    `include "nr_l2dl_dtc_rdma_coverage.sv"
+    `include "nr_l2dl_dtc_rdma_sequencer.sv"
+    `include "nr_l2dl_dtc_rdma_driver.sv"
+    `include "nr_l2dl_dtc_rdma_monitor.sv"
+    `include "nr_l2dl_dtc_rdma_scb_transformer.sv"
+    `include "nr_l2dl_dtc_rdma_agent.sv"
+    `include "nr_l2dl_dtc_rdma_seq_lib.sv"
+
+endpackage : nr_l2dl_dtc_rdma_pkg
+
+`endif // NR_L2DL_DTC_dma_PKG__SVI

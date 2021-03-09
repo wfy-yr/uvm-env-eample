@@ -1,0 +1,41 @@
+`ifndef NR_L2DL_ENV_PKG__SVI
+`define NR_L2DL_ENV_PKG__SVI
+
+`include "uvm_macros.svh"
+`include "nr_l2dl_top_intf.svi"
+`include "nr_l2dl_reg_model_pkg.svi"
+
+package nr_l2dl_env_pkg;
+    import uvm_pkg::*;
+
+    import regbus_pkg::*;
+    import asr_common_pkg::*;
+    import env_common_pkg::*;
+
+    import asr_src_fifo_pkg::*;
+    import asr_dst_fifo_pkg::*;
+    //rx_mac reuse
+    import rx_mac_tb_cmd_pkg::*;
+    import rx_mac_dma_pkg::*;
+    import rx_mac_mce_pkg::*;
+    import rx_mac_dl_node0_pkg::*;
+    import rx_mac_env_pkg::*;
+
+    import nr_l2dl_dtc_pld_pkg::*;
+    import nr_l2dl_dtc_rdma_pkg::*;
+
+    import nr_l2dl_reg_model_pkg::*;
+
+
+    typedef class nr_l2dl_env_cfg;
+    typedef class nr_l2dl_coverage;
+
+    `include "nr_l2dl_ddr_mem_backdoor.sv"
+    `include "nr_l2dl_env_cfg.sv"
+    `include "nr_l2dl_coverage.sv"
+    `include "nr_l2dl_scb.sv"
+    `include "nr_l2dl_ref_model.sv"
+    `include "nr_l2dl_env.sv"
+    `include "seq/nr_l2dl_seq_include.svi"
+endpackage : nr_l2dl_env_pkg
+`endif

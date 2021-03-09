@@ -1,5 +1,3 @@
-
-
 //User need to update insert_transform & expect_transform functions to: 
 //1.Convert insert type -> compare type 
 //2.Convert expect type -> compare type 

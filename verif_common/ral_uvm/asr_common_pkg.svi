@@ -1,0 +1,13 @@
+`ifndef ASR_COMMON_PKG__SVI
+`define ASR_COMMON_PKG__SVI
+package asr_common_pkg;
+    import uvm_pkg::*;
+
+    `include "asr_base_scb_item.sv"
+    `include "asr_base_scb_transformer.sv"
+    `include "asr_base_scb_comparer.sv"
+    `include "asr_base_scb_printer.sv"
+    `include "asr_base_scoreboard.sv"
+    `include "asr_ral_base_seq.sv"
+endpackage : asr_common_pkg
+`endif

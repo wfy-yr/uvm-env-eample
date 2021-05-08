@@ -64,18 +64,18 @@ class asr_ral_base_seq extends uvm_sequence;
     extern virtual function void get_blk_offset(uvm_reg_block leaf_model, uvm_reg_block root_model);
     extern virtual task write_reg_by_name(input string reg_name, input uvm_reg_data_t wdata, string map_name = "", string model_name = "", 
                                           uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
-    extern virtual task read_reg_by_name(input string reg_name, input uvm_reg_data_t rdata, string map_name = "", string model_name = "", 
+        extern virtual task read_reg_by_name(input string reg_name, output uvm_reg_data_t rdata, input string map_name = "", string model_name = "", 
                                          uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     extern virtual task write_field_by_name(input string field_name, input string reg_name, input uvm_reg_data_t wdata, string map_name = "", string model_name = "", 
                                             uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
-    extern virtual task read_field_by_name(input string field_name, input string reg_name, input uvm_reg_data_t rdata, string map_name = "", string model_name = "", 
+    extern virtual task read_field_by_name(input string field_name, input string reg_name, output uvm_reg_data_t rdata, input string map_name = "", string model_name = "", 
                                            uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     extern virtual task get_field_by_name(input string field_name, input string reg_name, output uvm_reg_data_t rdata, input string model_name = "", 
                                           string cur_file = "", int cur_line=0);
     extern protected virtual function uvm_reg_field get_field_obj_by_name(input string field_name, input string reg_name, input string model_name = "", string cur_file = "", int cur_line=0);
     extern virtual task reg_write(uvm_reg cur_reg, input uvm_reg_data_t wdata, uvm_path_e path = UVM_FRONTDOOR,
                                   uvm_reg_map map = null, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
-    extern virtual task reg_read(uvm_reg cur_reg, output uvm_reg_data_t rdata, uvm_path_e path = UVM_FRONTDOOR,
+        extern virtual task reg_read(uvm_reg cur_reg, output uvm_reg_data_t rdata, input uvm_path_e path = UVM_FRONTDOOR,
                                  uvm_reg_map map = null, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     extern protected virtual function uvm_reg_map get_map_by_name(ref string model_name, ref string map_name);
     extern protected virtual function uvm_reg find_reg_by_name(ref string model_name, string base_name);
@@ -84,7 +84,7 @@ class asr_ral_base_seq extends uvm_sequence;
     extern virtual task write_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t byte_offset, bit [7:0] wbytes[],
                                              uvm_reg_map map, uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null,
                                              bit check_rsp = 0, string cur_file="", int cur_line=0);
-    extern virtual task read_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t byte_offset, bit [7:0] rbytes[],
+        extern virtual task read_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t byte_offset, ref bit [7:0] rbytes[],
                                             uvm_reg_map map, uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null,
                                             bit check_rsp = 0, string cur_file="", int cur_line=0);
 endclass: asr_ral_base_seq
@@ -190,7 +190,7 @@ task asr_ral_base_seq::write_reg_by_name(input string reg_name, input uvm_reg_da
     `uvm_info("WRITE_REG_BY_NAME", $sformatf("[%s     %s.%s = 0x%8h in %s]", get_full_name(), model_name, reg_name, wdata, cur_map.get_full_name()), UVM_FULL)
 endtask : write_reg_by_name
 
-task asr_ral_base_seq::read_reg_by_name(input string reg_name, input uvm_reg_data_t rdata, string map_name = "", string model_name = "", 
+task asr_ral_base_seq::read_reg_by_name(input string reg_name, output uvm_reg_data_t rdata, input string map_name = "", string model_name = "", 
                                          uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     uvm_reg my_reg;
     uvm_reg_map cur_map;
@@ -272,8 +272,8 @@ task asr_ral_base_seq::write_field_by_name(input string field_name, input string
 
     `uvm_info("WRITE_FIELD_BY_NAME", $sformatf("[%s     %s.%s::%s = 0x%8h]", get_full_name(), model_name, reg_name, field_name, wdata), UVM_FULL)
 endtask : write_field_by_name
-
-task asr_ral_base_seq::read_field_by_name(input string field_name, input string reg_name, input uvm_reg_data_t rdata, string map_name = "", string model_name = "", 
+            
+task asr_ral_base_seq::read_field_by_name(input string field_name, input string reg_name, output uvm_reg_data_t rdata, input string map_name = "", string model_name = "", 
                                          uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     uvm_reg my_reg;
     uvm_reg_field my_field;
@@ -369,7 +369,7 @@ task asr_ral_base_seq::reg_write(uvm_reg cur_reg, input uvm_reg_data_t wdata, uv
     this.status = my_status;
 endtask : reg_write
 
-task asr_ral_base_seq::reg_read(uvm_reg cur_reg, output uvm_reg_data_t rdata, uvm_path_e path = UVM_FRONTDOOR,
+            task asr_ral_base_seq::reg_read(uvm_reg cur_reg, output uvm_reg_data_t rdata, input uvm_path_e path = UVM_FRONTDOOR,
                                  uvm_reg_map map = null, uvm_object extension = null, bit check_rsp = 0, string cur_file = "", int cur_line=0);
     uvm_status_e my_status;
 
@@ -485,7 +485,7 @@ task asr_ral_base_seq::write_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t b
     this.status = my_status;
 endtask : write_vmem_bytes 
 
-task asr_ral_base_seq::read_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t byte_offset, bit [7:0] rbytes[],
+            task asr_ral_base_seq::read_vmem_bytes(input uvm_mem mem_inst, uvm_reg_addr_t byte_offset, ref bit [7:0] rbytes[],
                           uvm_reg_map map, uvm_path_e path = UVM_FRONTDOOR, uvm_object extension = null,
                           bit check_rsp = 0, string cur_file="", int cur_line=0);
     uvm_reg_data_t mem_entry[];

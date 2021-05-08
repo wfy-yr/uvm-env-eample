@@ -2,9 +2,9 @@ Awesome-dv
 Design/Verification
 Project
 
-    Ibex: https://github.com/lowRISC/ibex 
+    *Ibex: https://github.com/lowRISC/ibex 
     
-    opentitan: https://github.com/lowRISC/opentitan
+    *opentitan: https://github.com/lowRISC/opentitan
 
     nvdla: https://github.com/nvdla/hw
 
